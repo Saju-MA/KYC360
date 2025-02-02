@@ -1,0 +1,87 @@
+﻿@model KYC360.Web.ViewModels.AdminPageViewModels.AdminPageViewModel
+
+@{
+    ViewData["Title"] = "Admin Panel";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-4 rounded">
+        <h2 class="text-center mb-4">Admin Panel</h2>
+
+        <!-- Show Validation Errors -->
+        <div asp-validation-summary="All" class="alert alert-danger" style="display: @(ViewData.ModelState.IsValid ? "none" : "block");"></div>
+
+        <form asp-action="Index" method="post">
+            <div class="mb-3">
+                <label asp-for="UserName" class="form-label">User Name</label>
+                <input asp-for="UserName" class="form-control" placeholder="Enter user name" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ClickTimes" class="form-label">Click Times</label>
+                <input asp-for="ClickTimes" type="number" class="form-control" min="1" placeholder="Enter number of clicks" />
+                <span asp-validation-for="ClickTimes" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Minutes" class="form-label">Minutes (optional)</label>
+                <input asp-for="Minutes" type="number" class="form-control" placeholder="Leave empty or enter minutes" />
+                <span asp-validation-for="Minutes" class="text-danger"></span>
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg">Generate</button>
+            </div>
+        </form>
+
+        @if (!string.IsNullOrEmpty(Model.GeneratedUrl))
+        {
+            <div class="form-group mt-3 position-relative">
+                <label>Generated URL:</label>
+                <div class="copy-container">
+                    <input type="text" id="generatedUrl" class="form-control copy-input" readonly value="@Model.GeneratedUrl" onclick="copyToClipboard()"
+                    @(Model.CanCopy ? "onclick='copyToClipboard()'" : "disabled") />
+                    <span id="copyMessage" class="copy-message">Link Copied!</span>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        function copyToClipboard() {
+            var copyText = document.getElementById("generatedUrl");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            document.execCommand("copy");
+
+            var copyMessage = document.getElementById("copyMessage");
+            copyMessage.style.opacity = "1";
+
+            setTimeout(function () {
+                copyMessage.style.opacity = "0";
+            }, 2000);
+        }
+    </script>
+
+    <style>
+        .copy-message {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-70%);
+            background: rgba(0, 128, 0, 0.8);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+    </style>
+}
